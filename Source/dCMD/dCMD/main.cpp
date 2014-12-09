@@ -47,7 +47,7 @@ PLUGIN_FUNCTION COMMAND (AMX* amx, cell* params) {
 			amx_PushString(temp.second, &amx_Address, NULL, tokens, NULL, NULL);
 			amx_Push(temp.second, params[1]);
 			amx_Exec(temp.second, NULL, temp.first);
-			amx_Release(amx, amx_Address);
+			amx_Release(temp.second, amx_Address);
 			return 1;
 		} else {
 			amx_FindPublic(amx, cmdtext, &idx);
