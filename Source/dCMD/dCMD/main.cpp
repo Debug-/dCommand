@@ -27,7 +27,6 @@ PLUGIN_FUNCTION COMMAND (AMX* amx, cell* params) {
 	strtok_s(cmdtext, " ", &tokens);
 	int cmdlen = strlen (cmdtext);
 	for (int i = 1; i < cmdlen; cmdtext[i] = tolower(cmdtext[i++]));
-	cmdtext[0] = '_';
 	unsigned int hash = SuperFastHash(cmdtext, strlen(cmdtext));
 	size_t tmp = cmd.count(hash);
 
@@ -37,7 +36,8 @@ PLUGIN_FUNCTION COMMAND (AMX* amx, cell* params) {
 		Command[0] = '_';
 		cmdtext = Command;
 	}
-
+	
+	cmdtext[0] = '_';
 	if (*tokens) {
 		deblank(tokens);
 		int idx;
