@@ -26,9 +26,9 @@ PLUGIN_FUNCTION COMMAND (AMX* amx, cell* params) {
 
 	amx_StrParam(amx, params[2], cmdtext);
 	strtok_s(cmdtext, " ", &tokens);
-	size_t cmdlen = strlen (cmdtext);
-	for (ptrdiff_t i = 1; i < static_cast<ptrdiff_t>(cmdlen); cmdtext [i] = tolower(cmdtext[i++]));
-	ptrdiff_t hash = SuperFastHash(cmdtext, static_cast<ptrdiff_t>(cmdlen));
+	size_t cmdlen = strlen(cmdtext);
+	for (size_t i = 1; i < cmdlen; cmdtext [i] = tolower(cmdtext[i++]));
+	int hash = SuperFastHash(cmdtext, static_cast<int>(cmdlen));
 	auto tmp = cmd.find(hash);
 	auto alias = Aliases.find(hash);
 
@@ -83,14 +83,14 @@ PLUGIN_FUNCTION RegisterAliases(AMX* amx, cell* params) {
 
 	amx_StrParam(amx, params[i++], orig);
 	amx_StrParam(amx, params[i++], command);
-
+	size_t cmdlen = strlen(command);
 	while (command != NULL) {
 		char *temp = new char[32];
 		strcpy_s(temp, 32, orig);
 
 		for (size_t x = 0; x < strlen(temp); temp[x] = tolower(temp[x++]));
-		for (size_t x = 0; x < strlen(command); command[x] = tolower(command[x++]));
-		Aliases.insert(std::make_pair(SuperFastHash(command, strlen(command)), temp));
+		for (size_t x = 0; x < cmdlen; command[x] = tolower(command[x++]));
+		Aliases.insert(std::make_pair(SuperFastHash(command, static_cast<int>(cmdlen)), temp));
 
 		delete[] temp;
 		command = NULL;
