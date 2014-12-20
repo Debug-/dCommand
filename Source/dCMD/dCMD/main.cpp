@@ -79,7 +79,7 @@ PLUGIN_FUNCTION COMMAND (AMX* amx, cell* params) {
 
 PLUGIN_FUNCTION RegisterAliases(AMX* amx, cell* params) {
 	char *command, *orig;
-	ptrdiff_t i = 1;
+	size_t i = 1;
 
 	amx_StrParam(amx, params[i++], orig);
 	amx_StrParam(amx, params[i++], command);
