@@ -22,17 +22,18 @@ std::unordered_map<unsigned int, char *> Aliases;
 PLUGIN_FUNCTION COMMAND (AMX* amx, cell* params) {
 	char *cmdtext = NULL;
 	char *tokens = NULL;
+	char Command[32];
 
 	amx_StrParam(amx, params[2], cmdtext);
 	strtok_s(cmdtext, " ", &tokens);
-	int cmdlen = strlen (cmdtext);
-	for (int i = 1; i < cmdlen; cmdtext[i] = tolower(cmdtext[i++]));
-	unsigned int hash = SuperFastHash(cmdtext, strlen(cmdtext));
-	size_t tmp = cmd.count(hash);
+	size_t cmdlen = strlen (cmdtext);
+	for (ptrdiff_t i = 1; i < static_cast<ptrdiff_t>(cmdlen); cmdtext [i] = tolower(cmdtext[i++]));
+	ptrdiff_t hash = SuperFastHash(cmdtext, static_cast<ptrdiff_t>(cmdlen));
+	auto tmp = cmd.find(hash);
+	auto alias = Aliases.find(hash);
 
-	if (Aliases.count(hash)) {
-		char Command[32];
-		strcpy_s(Command, 32, Aliases.find(hash)->second);
+	if (alias != Aliases.end()) {
+		strcpy_s(Command, sizeof(Command), alias->second);
 		Command[0] = '_';
 		cmdtext = Command;
 	}
@@ -42,8 +43,8 @@ PLUGIN_FUNCTION COMMAND (AMX* amx, cell* params) {
 		deblank(tokens);
 		int idx;
 		cell amx_Address;
-		if (tmp) {
-			std::pair<int, AMX *> temp = cmd.find(hash)->second;
+		if (tmp != cmd.end()) {
+			std::pair<int, AMX *> temp = tmp->second;
 			amx_PushString(temp.second, &amx_Address, NULL, tokens, NULL, NULL);
 			amx_Push(temp.second, params[1]);
 			amx_Exec(temp.second, NULL, temp.first);
@@ -60,8 +61,8 @@ PLUGIN_FUNCTION COMMAND (AMX* amx, cell* params) {
 		}
 	} else {
 		int idx;
-		if (tmp) {
-			std::pair<int, AMX *> temp = cmd.find(hash)->second;
+		if (tmp != cmd.end()) {
+			std::pair<int, AMX *> temp = tmp->second;
 			amx_Push(temp.second, params[1]);
 			amx_Exec(temp.second, NULL, temp.first);
 			return 1;
@@ -78,7 +79,7 @@ PLUGIN_FUNCTION COMMAND (AMX* amx, cell* params) {
 
 PLUGIN_FUNCTION RegisterAliases(AMX* amx, cell* params) {
 	char *command, *orig;
-	int i = 1;
+	ptrdiff_t i = 1;
 
 	amx_StrParam(amx, params[i++], orig);
 	amx_StrParam(amx, params[i++], command);
